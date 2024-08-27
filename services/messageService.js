@@ -1,5 +1,6 @@
 
 const { User, Message } = require('../models');
+const { Op } = require('sequelize');
 
 class MessageServices{
 
@@ -23,5 +24,38 @@ async findAllMessages(){
     include: [{ model: User, as: 'sender' }, { model: User, as: 'receiver' }],
   });
 };
+
+async findMessagesByUserIdAndDateRange(userId, startDate, endDate) {
+  const whereCondition = {
+    receiverId: userId,
+    createdAt: {
+      [Op.between]: [startDate, endDate],
+    },
+  };
+
+  return Message.findAll({
+    where: whereCondition,
+    include: [{ model: User, as: 'sender' }, { model: User, as: 'receiver' }],
+  });
+}
+
+
+async findMessagesByDateRangeForAdmin(startDate, endDate, userId = null) {
+  const whereCondition = {
+    createdAt: {
+      [Op.between]: [startDate, endDate],
+    },
+  };
+
+  if (userId) {
+    whereCondition.receiverId = userId;
+  }
+
+  return Message.findAll({
+    where: whereCondition,
+    include: [{ model: User, as: 'sender' }, { model: User, as: 'receiver' }],
+  });
+}
+
 }
 module.exports =  MessageServices;

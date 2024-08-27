@@ -12,6 +12,8 @@ class MessageRoutes{
         this.router.post('/send',authenticateToken,uploadImageMiddleware, this.messageController.sendMessage.bind(this.messageController));
         this.router.get('/user/:userId', authenticateToken,this.messageController.getMessagesByUser.bind(this.messageController));
         this.router.get('/all', authenticateToken,authorizeRole('admin'), this.messageController.getAllMessages.bind(this.messageController));
+        this.router.get('/messages', authenticateToken, this.messageController.getOwnMessagesByDateRange.bind(this.messageController));
+        this.router.get('/admin/messages', authenticateToken,authorizeRole('admin'), this.messageController.getMessagesByDateRangeForAdmin.bind(this.messageController));
     }
     getRouter() {
         return this.router;

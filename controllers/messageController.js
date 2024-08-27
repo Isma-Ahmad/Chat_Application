@@ -26,6 +26,32 @@ async getAllMessages(req, res){
     res.json(messages);
  
 };
+
+
+async getOwnMessagesByDateRange(req, res) {
+  const { startDate, endDate } = req.query;
+  const userId = req.user.id; 
+
+  try {
+    const messages = await this.messageServices.findMessagesByUserIdAndDateRange(userId, startDate, endDate);
+    res.status(200).json(messages);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}
+
+
+async getMessagesByDateRangeForAdmin(req, res) {
+  const { startDate, endDate, userId } = req.query;
+
+  try {
+    const messages = await this.messageServices.findMessagesByDateRangeForAdmin(startDate, endDate, userId);
+    res.status(200).json(messages);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}
+
 }
 module.exports =  MessageController;
 
