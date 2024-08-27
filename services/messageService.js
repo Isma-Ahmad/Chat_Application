@@ -1,12 +1,12 @@
 
 const { User, Message } = require('../models');
 
-const createMessage = async (senderId, receiverId, content) => {
+const createMessage = async (senderId, receiverId, content,images) => {
 
   const receiver = await User.findByPk(receiverId);
   if (!receiver) throw new Error('Receiver not found');
 
-  return Message.create({ senderId, receiverId, content });
+  return Message.create({ senderId, receiverId, content , images});
 };
 
 const findMessagesByUserId = async (userId) => {

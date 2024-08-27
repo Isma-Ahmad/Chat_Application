@@ -3,8 +3,9 @@ const { createMessage, findMessagesByUserId, findAllMessages } = require('../ser
 const sendMessage = async (req, res) => {
   const { receiverId, content } = req.body;
   const senderId = req.user.id;
-    const message = await createMessage(senderId, receiverId, content);
-    res.status(201).json(message);
+  const images = req.files ? req.files.map(file => file.filename) : [];
+  const message = await createMessage(senderId, receiverId, content,images);
+  res.status(201).json(message);
  
 };
 
