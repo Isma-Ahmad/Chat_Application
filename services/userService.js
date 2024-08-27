@@ -1,20 +1,18 @@
 const bcrypt = require('bcryptjs');
 const { User } = require('../models');
 
-const createUser = async (username, password, role) => {
+class UserService{
+
+async createUser (username, password, role){
   const hashedPassword = await bcrypt.hash(password, 10);
   return User.create({ username, password: hashedPassword, role });
 };
 
-const findUserByUsername = async (username) => {
+async findUserByUsername (username){
   return User.findOne({ where: { username } });
 };
 
-const findUserById = async (id) => {
-  return User.findByPk(id);
-};
-
-const updateUserById = async (id, username, password) => {
+async updateUserById (id, username, password) {
   const user = await findUserById(id);
   if (user) {
     if (username) user.username = username;
@@ -24,7 +22,7 @@ const updateUserById = async (id, username, password) => {
   return null;
 };
 
-const deleteUserById = async (id) => {
+async deleteUserById (id){
   const user = await findUserById(id);
   if (user) {
     await user.destroy();
@@ -33,10 +31,6 @@ const deleteUserById = async (id) => {
   return null;
 };
 
-module.exports = { 
-  createUser, 
-  findUserByUsername,
-   findUserById, 
-   updateUserById, 
-   deleteUserById
-   };
+}
+
+module.exports = UserService;

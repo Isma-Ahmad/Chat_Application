@@ -1,17 +1,23 @@
-const { createUser, findUserByUsername, updateUserById, deleteUserById } = require('../services/userService');
+const UserService = require('../services/userService');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-const register = async (req, res) => {
+
+class UserController{
+constructor(){
+  this.userService = new UserService();
+}
+
+async register (req, res) {
   const { username, password, role } = req.body;
-    const user = await createUser(username, password, role);
+    const user = await this.userService.createUser(username, password, role);
     res.status(201).json(user);
 
 };
 
-const login = async (req, res) => {
+async login (req, res) {
   const { username, password } = req.body;
-    const user = await findUserByUsername(username);
+    const user = await this.userService.findUserByUsername(username);
     if (user && await bcrypt.compare(password, user.password)) {
       const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, 'abc@123');
       res.json({ token });
@@ -21,10 +27,10 @@ const login = async (req, res) => {
   
 };
 
-const updateUser = async (req, res) => {
+async updateUser (req, res){
   const { id } = req.params;
   const { username, password } = req.body;
-    const user = await updateUserById(id, username, password);
+    const user = await this.userService.updateUserById(id, username, password);
     if (user) {
       res.json(user);
     } else {
@@ -33,9 +39,9 @@ const updateUser = async (req, res) => {
 
 };
 
-const deleteUser = async (req, res) => {
+async deleteUser (req, res){
   const { id } = req.params;
-    const user = await deleteUserById(id);
+    const user = await this.userService.deleteUserById(id);
     if (user) {
       res.sendStatus(204);
     } else {
@@ -43,10 +49,5 @@ const deleteUser = async (req, res) => {
     }
  
 };
-
-module.exports = { 
-  register, 
-  login, 
-  updateUser, 
-  deleteUser 
-};
+}
+module.exports = UserController;

@@ -10,7 +10,7 @@ class MessageRoutes{
     }
     initializeRoutes() {
         this.router.post('/send',authenticateToken,uploadImageMiddleware, this.messageController.sendMessage.bind(this.messageController));
-        this.router.get('/items/:userId', authenticateToken,this.messageController.getMessagesByUser.bind(this.messageController));
+        this.router.get('/user/:userId', authenticateToken,this.messageController.getMessagesByUser.bind(this.messageController));
         this.router.get('/all', authenticateToken,authorizeRole('admin'), this.messageController.getAllMessages.bind(this.messageController));
     }
     getRouter() {

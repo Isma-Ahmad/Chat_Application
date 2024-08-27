@@ -1,11 +1,12 @@
 const express = require('express');
-const userRoutes = require('./routes/userRoutes');
+const UserRoutes = require('./routes/userRoutes');
+const userRoutes = new UserRoutes();
 const MessageRoutes = require('./routes/msgRoutes');
 const messageRoutes = new MessageRoutes();
 const app = express();
 app.use(express.json());
 
-app.use('/users', userRoutes);
+app.use('/users', userRoutes.getUserRouter());
 app.use('/messages', messageRoutes.getRouter());
 
 app.listen(3000, () => {
