@@ -23,14 +23,19 @@ async findUserById(id) {
   return User.findByPk(id);
 }
 
-async updateUserById (id, username, password) {
-  const user = await findUserById(id);
-  if (user) {
-    if (username) user.username = username;
-    if (password) user.password = await bcrypt.hash(password, 10);
-    return user.save();
-  }
-  return null;
+  async updateUserById(id, username, email, password) {
+  
+    const user = await User.findByPk(id);
+    if (!user) throw new Error('User not found');
+
+    const updatedData = {};
+    if (username) updatedData.username = username;
+    if (email) updatedData.email = email;
+    if (password) updatedData.password = await bcrypt.hash(password, 10);
+
+    await user.update(updatedData);
+
+    return user;
 };
 
 async deleteUserById (id){
