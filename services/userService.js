@@ -8,10 +8,10 @@ class UserService{
   }
 async createUser (username,email, password, role = 'user'){
 
-  const originalPassword = password;
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const user= await User.create({ username,email, password: hashedPassword, role,isApproved: false  });
-  await this.emailService.sendApprovalEmail(user, originalPassword);
+  // const originalPassword = password;
+  // const hashedPassword = await bcrypt.hash(password, 10);
+  const user= await User.create({ username,email, password, role,isApproved: false  });
+  // await this.emailService.sendApprovalEmail(user, originalPassword);
   return user;
 };
 
