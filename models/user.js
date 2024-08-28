@@ -4,7 +4,12 @@ module.exports = (sequelize) => {
     username: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
+     
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      
     },
     password: {
       type: DataTypes.STRING,
@@ -13,6 +18,10 @@ module.exports = (sequelize) => {
     role: {
       type: DataTypes.ENUM('admin', 'user'),
       allowNull: false,
+    },
+    isApproved: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false, 
     },
   }, {
     timestamps: true,

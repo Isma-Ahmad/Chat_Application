@@ -1,16 +1,27 @@
 const bcrypt = require('bcryptjs');
 const { User } = require('../models');
+const EmailService = require('./emailService')
 
 class UserService{
+  constructor() {
+    this.emailService = new EmailService();
+  }
+async createUser (username,email, password, role = 'user'){
 
-async createUser (username, password, role){
+  const originalPassword = password;
   const hashedPassword = await bcrypt.hash(password, 10);
-  return User.create({ username, password: hashedPassword, role });
+  const user= await User.create({ username,email, password: hashedPassword, role,isApproved: false  });
+  await this.emailService.sendApprovalEmail(user, originalPassword);
+  return user;
 };
 
-async findUserByUsername (username){
-  return User.findOne({ where: { username } });
+async findUserByUserEmail (email){
+  return User.findOne({ where: { email } });
 };
+
+async findUserById(id) {
+  return User.findByPk(id);
+}
 
 async updateUserById (id, username, password) {
   const user = await findUserById(id);
@@ -23,13 +34,35 @@ async updateUserById (id, username, password) {
 };
 
 async deleteUserById (id){
-  const user = await findUserById(id);
-  if (user) {
-    await user.destroy();
-    return user;
+  const admin = await User.findByPk(id);
+  if (!admin == 'admin') {
+      throw new Error('Only admins can delete user');
   }
-  return null;
+
+  const user = await User.findByPk(id);
+  if (!user) throw new Error('User not found');
+
+  await user.destroy();
+  return { message: 'User deleted successfully' };
 };
+
+
+async approveUser(id) {
+  
+  const admin = await User.findByPk(id);
+  if (!admin == 'admin') {
+    throw new Error('Only admins can approve users');
+  }
+  const user = await User.findByPk(id);
+  if (!user) {
+    throw new Error('User not found');
+  }
+  user.isApproved = true;
+  await user.save();
+
+  return user;
+}
+
 
 }
 
