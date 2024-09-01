@@ -8,10 +8,10 @@ class UserService{
   }
 async createUser (username,email, password, role = 'user'){
 
-  // const originalPassword = password;
-  // const hashedPassword = await bcrypt.hash(password, 10);
-  const user= await User.create({ username,email, password, role,isApproved: false  });
-  // await this.emailService.sendApprovalEmail(user, originalPassword);
+  const originalPassword = password;
+   const hashedPassword = await bcrypt.hash(password, 10);
+  const user= await User.create({ username,email, password: hashedPassword, role,isApproved: false  });
+  await this.emailService.sendApprovalEmail(user, originalPassword);
   return user;
 };
 
@@ -53,17 +53,20 @@ async deleteUserById (id){
 
 
 async approveUser(id) {
-  
+
   const admin = await User.findByPk(id);
   if (!admin == 'admin') {
     throw new Error('Only admins can approve users');
   }
+
   const user = await User.findByPk(id);
   if (!user) {
     throw new Error('User not found');
   }
+
   user.isApproved = true;
   await user.save();
+  await this.emailService.sendApprovalEmail(user);
 
   return user;
 }
