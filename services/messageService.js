@@ -1,16 +1,28 @@
 
 const { User, Message } = require('../models');
 const { Op } = require('sequelize');
+const msgEmailService = require('../middleware/msgEmail')
 
 class MessageServices{
+  constructor() {
+    this.msgemailService = new msgEmailService();
+  }
 
-async createMessage(senderId, receiverId, content,images){
+  async createMessage(senderId, receiverId, content, images = []) {
+    const sender = await User.findByPk(senderId);
+    const receiver = await User.findByPk(receiverId);
 
-  const receiver = await User.findByPk(receiverId);
-  if (!receiver) throw new Error('Receiver not found');
+    if (!receiver) throw new Error('Receiver not found');
 
-  return Message.create({ senderId, receiverId, content , images});
-};
+    const message = await Message.create({ senderId, receiverId, content, images });
+
+    if (receiver.isEmail) {
+      await this.msgemailService.sendMessageNotification(sender, receiver, content, images);
+    }
+
+    return message;
+  };
+  
 
 async findMessagesByUserId(userId){
   return Message.findAll({

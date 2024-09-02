@@ -52,14 +52,14 @@ async deleteUserById (id){
 };
 
 
-async approveUser(id) {
+async approveUser(adminId,userId) {
 
-  const admin = await User.findByPk(id);
+  const admin = await User.findByPk(adminId);
   if (!admin == 'admin') {
     throw new Error('Only admins can approve users');
   }
 
-  const user = await User.findByPk(id);
+  const user = await User.findByPk(userId);
   if (!user) {
     throw new Error('User not found');
   }

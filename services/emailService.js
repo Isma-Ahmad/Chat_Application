@@ -22,6 +22,9 @@ class EmailService {
 
     return this.transporter.sendMail(mailOptions);
   }
+
+  
+  
 }
 
 module.exports =  EmailService;
