@@ -23,7 +23,7 @@ class msgEmailService {
     if (images.length > 0) {
       msgMailOptions.attachments = images.map(image => ({
         filename: image,
-        path: `./uploads/${image}`, // assuming images are stored in an uploads folder
+        path: `./uploads/${image}`, 
       }));
     }
 
